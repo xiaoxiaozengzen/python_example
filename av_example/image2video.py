@@ -1,5 +1,6 @@
 import av
 import sys
+import os
 from PIL import Image
 
 def using_av(image_path: str, output_path: str):
@@ -17,11 +18,17 @@ def using_av(image_path: str, output_path: str):
     stream.height = img.height
     stream.pix_fmt = 'yuv420p'  # 设置像素格式为 YUV 4:2:0 JPEG格式
     # stream.time_base = av.time_base
-    stream.bit_rate = 1024 * 1024 * 8
+    stream.bit_rate = 1024 * 1024 * 8 # 编码目标码率，编码器会尽量控制输出码率在这个范围内
     
-    for num in range(1,100):
-        image_file = f"{image_path}/frame_1.jpg"
-        print("Processing image: ", image_file)
+    frame_count = 0
+    packet_count = 0
+    while True:
+        frame_count += 1
+        image_file = f"{image_path}/frame_{frame_count}.jpg"
+        if os.path.exists(image_file) is False:
+            print(f"No more images found at {image_file}. Stopping processing.")
+            break
+        
         img = Image.open(image_file)
         if img.size != (stream.width, stream.height):
             img = img.resize((stream.width, stream.height))
@@ -36,12 +43,15 @@ def using_av(image_path: str, output_path: str):
         # packet：是编码后的数据块，例如压缩后的码流片段(h264, h265等)
         # 特点：已压缩，适合传输和存储，不能直接处理
         for packet in stream.encode(video_frame):
-            print(f"============frame {num}============")
+            packet_count += 1
+            print(f"============ frame: {frame_count} packet {packet_count}============")
             print("pts: ", packet.pts)
             print("dts: ", packet.dts)
             print("duration: ", packet.duration / av.time_base)  # duration in seconds
             print("size: ", packet.size)  # size in bytes
             print("time_base: ", packet.time_base)  # time base of the packet
+            print("is_keyframe: ", packet.is_keyframe)
+            
             
             # 将编码后的数据块写入容器
             container.mux(packet)

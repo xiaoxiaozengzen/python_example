@@ -34,8 +34,6 @@ def using_av(video_path: str, output_path: str):
     
     frame_count = 0    
     for frame in container.decode(video=0):
-        if frame_count == 10:
-            break
         frame_count += 1
         print("----------frame {}----------".format(frame_count))
         print("frame.pts: ", frame.pts) # presentation timestamp
@@ -53,15 +51,15 @@ def using_av(video_path: str, output_path: str):
         # B帧：bidirectional frame，双向预测帧，依赖前后两帧来解码
         print("frame.pict_type: ", frame.pict_type)
         
+        # PIL的Image类型
         image = frame.to_image()
         print("image.mode: ", image.mode)  # 图像模式，如RGB, L等
         print("image.size: ", image.size)  # 图像尺寸 (width, height)
         print("image.format: ", image.format)  # 图像格式，如JPEG, PNG。通常为NODE，除非直接文件打开
-        if frame_count <= 10:
-            image.save(f"{output_path}/frame_{frame_count}.jpg")
+        image.save(f"{output_path}/frame_{frame_count}.jpg")
+        
         gray_image = image.convert("L")
-        if frame_count <= 10:
-            gray_image.save(f"{output_path}/frame_{frame_count}_gray.jpg")
+        gray_image.save(f"{output_path}/frame_{frame_count}_gray.jpg")
     
 if __name__ == "__main__":
     if len(sys.argv) != 3:
