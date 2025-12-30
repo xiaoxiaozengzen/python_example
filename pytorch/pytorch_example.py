@@ -51,11 +51,11 @@ def linear_layer():
     
 def conv2d_layer():
     import torch.nn as nn
-    # batch_size=1, channels=3, height=32, width=32
+    # batch_size=10, channels=3, height=32, width=32
     in_data = torch.randn(10, 3, 32, 32)
     # 卷积层示例：out_channels 相当于卷积层的“神经元数”
     conv = nn.Conv2d(in_channels=3, out_channels=8, kernel_size=3)
-    print('conv weight shape:', conv.weight.shape)  # (out_channels, in_channels, kH, kW)
+    print('conv weight shape:', conv.weight.shape)  # (out_channels, in_channels, kernel_H, kernel_W)
     out_data = conv(in_data)
     print('output shape:', out_data.shape)  # (batch_size, out_channels, out_height, out_width)
 
