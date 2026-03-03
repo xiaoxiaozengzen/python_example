@@ -1,7 +1,15 @@
+"""
+将ONNX模型转换为TensorRT引擎文件,这种转换后有可能对应的trt模型在实际加载的时候报错。
+推荐使用trtexec命令行的方式将ONNX模型转换为TensorRT引擎文件，命令如下：
+trtexec --onnx=deploy.onnx --saveEngine=deploy.engine --explicitBatch
+"""
+
 import tensorrt as trt
 
 onnx_path = "./deploy.onnx"
 engine_path = "./deploy.engine"
+
+print("TensorRT version:", trt.__version__)
 
 logger  = trt.Logger(trt.Logger.VERBOSE)
 builder = trt.Builder(logger)
