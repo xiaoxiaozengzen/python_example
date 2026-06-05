@@ -2,6 +2,7 @@ import torch
 import numpy as np
 
 def base():
+    print("==================== base ====================")
     # 当前安装的 PyTorch 库的版本
     print(torch.__version__)
     # 检查 CUDA 是否可用，即你的系统有 NVIDIA 的 GPU
@@ -31,6 +32,7 @@ def base():
     print(y)  # 输出一个 2x3 的零张量
     
 def linear_layer():
+    print("==================== linear layer ====================")
     import torch.nn as nn
     # 演示 nn.Linear 中神经元的数量与参数形状
     linear1 = nn.Linear(2, 3)  # in_features=2, out_features=3（可视为 3 个神经元）
@@ -42,6 +44,7 @@ def linear_layer():
     
     # 用一个小输入看输出维度：
     x = torch.randn(4, 2)  # batch=4, in_features=2
+    print("input x :", x)
     y = linear1(x)
     print("y shape:", y.shape)  # (batch_size, out_features)
     print("output y:", y)
@@ -50,12 +53,15 @@ def linear_layer():
     print("output z:", z)
     
 def conv2d_layer():
+    print("==================== conv2d layer ====================")
     import torch.nn as nn
     # batch_size=10, channels=3, height=32, width=32
     in_data = torch.randn(10, 3, 32, 32)
     # 卷积层示例：out_channels 相当于卷积层的“神经元数”
-    conv = nn.Conv2d(in_channels=3, out_channels=8, kernel_size=3)
+    # stride表示卷积核移动的步长，padding表示在输入周围添加的零填充
+    conv = nn.Conv2d(in_channels=3, out_channels=8, kernel_size=3, stride=1, padding=1)
     print('conv weight shape:', conv.weight.shape)  # (out_channels, in_channels, kernel_H, kernel_W)
+    print('conv bias shape:  ', conv.bias.shape)    # (out_channels,)
     out_data = conv(in_data)
     print('output shape:', out_data.shape)  # (batch_size, out_channels, out_height, out_width)
 

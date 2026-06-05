@@ -47,6 +47,13 @@ for epoch in range(100):  # 迭代50次
    loss.backward()  # 反向传播，计算梯度
    optimizer.step()  # 更新模型参数
    
+# 一般都会在训练结束后保存模型参数到文件
+# 如果训练时间很长，也可以在训练过程中定期保存模型参数，以防止意外中断导致训练成果丢失
+# 也可以在训练效果比较好的时候保存模型参数，以便后续使用或部署
+torch.save(model.state_dict(), "model.pth")
+
+# detach()方法用于从计算图中分离张量，使其不再具有梯度信息，
+# numpy()方法将PyTorch张量转换为NumPy数组 
 print("y_pred after training:", model(x).detach().numpy())
 # 预测结果是概率，输出大于0.5的为1，否则为0
 y_result = (model(x)[:, 0] > 0.5).float().unsqueeze(1)
@@ -58,9 +65,9 @@ import torch.onnx
 onnx_file_name = "deploy.onnx"
 # 我们需要转换的模型，将torch_model设置为自己的模型
 deploy_model = model
-# # 加载权重，将model.pth转换为自己的模型权重
-# # 如果模型的权重是使用多卡训练出来，我们需要去除权重中多的module. 具体操作可以见5.4节
-# deploy_model = deploy_model.load_state_dict(torch.load("model.pth"))
+# 加载权重，将model.pth转换为自己的模型权重
+# 如果模型的权重是使用多卡训练出来，我们需要去除权重中多的module
+deploy_model.load_state_dict(torch.load("model.pth"))
 # 导出模型前，必须调用model.eval()或者model.train(False)
 deploy_model.eval()
 # dummy_input就是一个输入的实例，仅提供输入shape、type等信息 
