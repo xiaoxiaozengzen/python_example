@@ -1,5 +1,4 @@
 *.onnx
-data
 *.ipynb
 *.engine
 *.txt
