@@ -104,7 +104,7 @@ print(f"[train] save pt to dir={ARTIFACTS_DIR}")
 sample_img, sample_label = test_set[0]
 sample_batch = sample_img.unsqueeze(0).to(device)
 backbone.eval()
-backbone.eval()
+head.eval()
 with torch.inference_mode():
     feat = backbone(sample_batch)
     logits = head(feat)
@@ -116,6 +116,15 @@ assert sample_np.shape == (1, 1, 28, 28), sample_np.shape
 assert sample_np.dtype == np.float32
 print(f"[train] pred {pred}")
 print(f"[train] sample_label {sample_label}")
+sample_np.tofile(os.path.join(ARTIFACTS_DIR, "sample_image.bin"))
+print(f"[train] save sample_image.bin to dir={ARTIFACTS_DIR}")
+img = sample_np[0, 0, :, :]
+img = img * MNIST_STD + MNIST_MEAN  # 反归一化
+img = np.clip(img, 0.0, 1.0)  # 将像素值限制在[0, 1]范围内
+from PIL import Image
+img_u8 = (img * 255.0).astype(np.uint8)  # 转换为uint8类型 
+pil = Image.fromarray(img_u8, mode="L")  # 创建灰度图像
+pil.save(os.path.join(ARTIFACTS_DIR, "sample_image.png"))
     
 # 7.导出onnx
 export_backbone = Backbone(out_dim=128)
